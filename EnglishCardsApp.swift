@@ -26,17 +26,9 @@ import SwiftUI
 @main
 /// App --- AppDelegate
 struct EnglishCardsApp: App {
+    
     var body: some Scene {
         WindowGroup {
-            /// Quien habla con internet
-            let apiClient = ApiClient()
-            
-            /// Quien pide datos al API
-            let remote = PhraseRemoteDataSource(apiClient: apiClient)
-            
-            /// Quien organiza los datos
-            let repository = PhraseRepositoryImpl(remoteDataSource: remote)
-            
             /// Quien prepara datos para la UI
             let viewModel = PhraseViewModel(repository: repository)
             
@@ -44,25 +36,20 @@ struct EnglishCardsApp: App {
             PhraseListView(viewModel: viewModel)
         }
     }
+    
+    /// Quien organiza los datos
+    private var repository: PhraseRepository {
+        switch AppConfig.environment {
+        case .mock:
+            return MockPhraseRepositoryImpl()
+            
+        case .production:
+            /// Quien habla con internet
+            let apiClient = ApiClient()
+            /// Quien pide datos al API
+            let remote = PhraseRemoteDataSource(apiClient: apiClient)
+            
+            return PhraseRepositoryImpl(remoteDataSource: remote)
+        }
+    }
 }
- 
-
-
-
-/*
- @main
- struct EnglishCardsApp: App {
-     
-     var body: some Scene {
-         WindowGroup {
-             
-             let apiClient = ApiClient()
-             let remote = PhraseRemoteDataSource(apiClient: apiClient)
-             let repository = PhraseRepositoryImpl(remoteDataSource: remote)
-             let viewModel = PhraseViewModel(repository: repository)
-             
-             PhraseListView(viewModel: viewModel)
-         }
-     }
- }
- */
