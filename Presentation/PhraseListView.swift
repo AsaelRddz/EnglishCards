@@ -24,7 +24,6 @@ struct PhraseListView : View {
             } else {
                 ZStack {
                     ZStack {
-                        
                         /// Por eso se coloca -- id: \.id
                         /// id: 1 → DraggableCard → offset propio
                         /// id: 2 → DraggableCard → offset propio
@@ -33,7 +32,7 @@ struct PhraseListView : View {
                             DraggableCard(text: item.text)
                         }
                     }
-                }.navigationTitle("Phrases").toolbar {
+                }.navigationTitle("Phrases")/*.toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
                             viewModel.setRandomPhrase()
@@ -41,7 +40,7 @@ struct PhraseListView : View {
                             Image(systemName: "arrow.trianglehead.clockwise")
                         }
                     }
-                }
+                }*/
             }
         }.onAppear {
             viewModel.loadPhrases()
@@ -55,9 +54,6 @@ struct DraggableCard: View {
     /// Estado PERMANENTE → guarda dónde quedó la card después de soltar
     @State private var offset: CGSize = .zero
     
-    /// Estado TEMPORAL → solo vive mientras arrastras (se resetea solo)
-    @GestureState private var dragOffset: CGSize = .zero
-    
     var body: some View {
         RoundedRectangle(cornerRadius: 20)
             .foregroundStyle(.gray)
@@ -68,22 +64,44 @@ struct DraggableCard: View {
             .padding()
         
             /// Posición final + movimiento actual
-                /// offset = posición acumulada
-                /// dragOffset = movimiento en tiempo real
-            .offset(x: offset.width + dragOffset.width,
-                    y: offset.height + dragOffset.height)
+                /// - offset = posición acumulada
+                /// - dragOffset = movimiento en tiempo real
+                    /// offset.height + dragOffset.height
+            .offset(x: offset.width,
+                    y: offset.height)
+        
+            /// la card va rotando mientras se arrastra y cuando es correcto el swipe
+            ///     - arrastras 50 → rota ~ 2.5°
+            ///     - arrastras 150 → rota ~ 7.5°
+            .rotationEffect(.degrees(Double(offset.width / 20)))
             .gesture(
                 DragGesture()
-                    .updating($dragOffset) { value, state, _ in
-                        state = value.translation
+                    /// Mientras se arrastra
+                    .onChanged { value in
+                        offset = value.translation
                     }
                     .onEnded { value in
+                        let threshold: CGFloat = 120
                         
-                        ///offset.width += value.translation.width
-                        /// offset.height += value.translation.height
-                        /// Se guarda la nueva posición
-                        offset.width = .zero
-                        offset.height = .zero
+                        if abs(value.translation.width) > threshold {
+                            /// Dirección del swipe
+                            ///     - derecha → +1
+                            ///     - izquierda → -1
+                            let direction: CGFloat = value.translation.width > 0 ? 1 : -1
+                            
+                            /// Animación de salida (easeIn ~ empieza lento termina rapido)
+                            /// - swipe derecha → 1 * 500 = 500
+                            /// - swipe izquierda → -1 * 500 = -500
+                            ///     - 500 = valor suficientemente grande para sacarla de la pantalla
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                offset.width = direction * 500
+                            }
+                        } else {
+                            /// La card regresa al centro
+                            withAnimation(.smooth) {
+                                offset = .zero
+                            }
+                        }
                     }
             )
     }
