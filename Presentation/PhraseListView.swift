@@ -29,7 +29,9 @@ struct PhraseListView : View {
                         /// id: 2 → DraggableCard → offset propio
                         /// id: 3 → DraggableCard → offset propio
                         ForEach(viewModel.phrases, id: \.id) { item in
-                            DraggableCard(text: item.text)
+                            DraggableCard(text: item.text) {
+                                viewModel.moveToBack()
+                            }
                         }
                     }
                 }.navigationTitle("Phrases")/*.toolbar {
@@ -50,6 +52,7 @@ struct PhraseListView : View {
 
 struct DraggableCard: View {
     let text: String
+    var moveToBack: () -> Void
     
     /// Estado PERMANENTE → guarda dónde quedó la card después de soltar
     @State private var offset: CGSize = .zero
@@ -95,6 +98,14 @@ struct DraggableCard: View {
                             ///     - 500 = valor suficientemente grande para sacarla de la pantalla
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 offset.width = direction * 500
+                            }
+                            
+                            Task {
+                                try? await Task.sleep(nanoseconds: 300_000_000)
+                                moveToBack()
+                                
+                                /// ajusta la card de nuevo en el centro
+                                offset = .zero
                             }
                         } else {
                             /// La card regresa al centro

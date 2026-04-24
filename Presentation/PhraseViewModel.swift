@@ -12,8 +12,8 @@ import Combine
 @MainActor
 class PhraseViewModel : ObservableObject {
     @Published var phrases : [Phrase] = []
+    @Published var randomPhrases : [Phrase] = []
     @Published var isLoading = false
-    @Published var randomPhrase: String = ""
     
     private let repository: PhraseRepository
     
@@ -33,7 +33,7 @@ class PhraseViewModel : ObservableObject {
                 /// •    Espera resultado
                 /// •    Continúa después
                 phrases = try await repository.fetchPhrases()
-                self.setRandomPhrase()
+                phrases = phrases.shuffled()
                 
                 isLoading = false
             } catch {
@@ -43,8 +43,17 @@ class PhraseViewModel : ObservableObject {
         }
     }
     
-    func setRandomPhrase() {
-        randomPhrase = phrases.randomElement()?.text ?? ""
+    /// Cuando llames esta función, no escribas el nombre item
+    ///     func moveToBack(_ item: Phrase) {
+    func moveToBack() {
+        /// elimina el ultimo valor y lo guarda en top (la card que se encuentra mas arriba)
+        ///     let top = phrases[phrases.count - 1] // obtener último
+        ///     phrases.removeLast()                 // quitarlo
+        ///     phrases.insert(top, at: 0)           // ponerlo adelante (al final)
+        let top = phrases.removeLast()
+        
+        /// coloca top en la ultima posicion
+        phrases.insert(top, at: 0)
     }
 }
 
