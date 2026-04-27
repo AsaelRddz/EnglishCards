@@ -10,4 +10,5 @@ import Foundation
 struct Phrase: Identifiable, Codable {
     let id: Int
     let text: String
+    let example : String
 }

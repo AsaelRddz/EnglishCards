@@ -26,7 +26,7 @@ class PhraseRemoteDataSource {
         /// .map transforma cada elemento de una colección y devuelve una nueva colección transformada.
         return response.map { value in
             Phrase(
-                id: value.id, text: value.text
+                id: value.id, text: value.text, example: value.example
             )
         }
     }

@@ -33,7 +33,7 @@ class PhraseViewModel : ObservableObject {
                 /// •    Espera resultado
                 /// •    Continúa después
                 phrases = try await repository.fetchPhrases()
-                phrases = phrases.shuffled()
+                randomPhrases = phrases.shuffled()
                 
                 isLoading = false
             } catch {
@@ -50,10 +50,10 @@ class PhraseViewModel : ObservableObject {
         ///     let top = phrases[phrases.count - 1] // obtener último
         ///     phrases.removeLast()                 // quitarlo
         ///     phrases.insert(top, at: 0)           // ponerlo adelante (al final)
-        let top = phrases.removeLast()
+        let top = randomPhrases.removeLast()
         
         /// coloca top en la ultima posicion
-        phrases.insert(top, at: 0)
+        randomPhrases.insert(top, at: 0)
     }
 }
 

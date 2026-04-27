@@ -18,7 +18,7 @@ struct PhraseListView : View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             if viewModel.isLoading {
                 ProgressView()
             } else {
@@ -28,21 +28,21 @@ struct PhraseListView : View {
                         /// id: 1 → DraggableCard → offset propio
                         /// id: 2 → DraggableCard → offset propio
                         /// id: 3 → DraggableCard → offset propio
-                        ForEach(viewModel.phrases, id: \.id) { item in
-                            DraggableCard(text: item.text) {
+                        ForEach(viewModel.randomPhrases, id: \.id) { item in
+                            DraggableCard(text: item.text, example: item.example) {
                                 viewModel.moveToBack()
                             }
                         }
                     }
-                }.navigationTitle("Phrases")/*.toolbar {
+                }.navigationTitle("Phrases").toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: {
-                            viewModel.setRandomPhrase()
-                        }){
-                            Image(systemName: "arrow.trianglehead.clockwise")
+                        NavigationLink {
+                            InfoListView(phrases: $viewModel.phrases)
+                        } label : {
+                            Image(systemName: "info.circle")
                         }
                     }
-                }*/
+                }
             }
         }.onAppear {
             viewModel.loadPhrases()
@@ -52,6 +52,7 @@ struct PhraseListView : View {
 
 struct DraggableCard: View {
     let text: String
+    let example : String
     var moveToBack: () -> Void
     
     /// Estado PERMANENTE → guarda dónde quedó la card después de soltar
@@ -61,8 +62,14 @@ struct DraggableCard: View {
         RoundedRectangle(cornerRadius: 20)
             .foregroundStyle(.gray)
             .overlay {
-                Text(text)
-                    .foregroundStyle(.white)
+                VStack {
+                    Text(text)
+                        .foregroundStyle(.white)
+                        .font(.headline)
+                    Text(example)
+                        .foregroundStyle(.white)
+                        .font(.caption)
+                }
             }
             .padding()
         
