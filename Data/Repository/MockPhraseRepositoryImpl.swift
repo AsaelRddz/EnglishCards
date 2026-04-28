@@ -15,22 +15,26 @@ class MockPhraseRepositoryImpl : PhraseRepository {
             Phrase(
                 id: 1,
                 text: "Hello world",
-                example: "Hello world is usually the first program."
+                example: "Hello world is usually the first program.",
+                favorite: true
             ),
             Phrase(
                 id: 2,
                 text: "How are you?",
-                example: "How are you doing today?"
+                example: "How are you doing today?",
+                favorite: false
             ),
             Phrase(
                 id: 3,
                 text: "SwiftUI Preview",
-                example: "SwiftUI Preview helps visualize views quickly."
+                example: "SwiftUI Preview helps visualize views quickly.",
+                favorite: false
             ),
             Phrase(
                 id: 4,
                 text: "This is a mock phrase",
-                example: "This is only sample data for testing."
+                example: "This is only sample data for testing.",
+                favorite: true
             )
         ]
     }
