@@ -56,21 +56,3 @@ class PhraseViewModel : ObservableObject {
         randomPhrases.insert(top, at: 0)
     }
 }
-
-
-/*
-     func loadPhrases() async {
-         do {
-             isLoading = true
-             phrases = try await repository.fetchPhrases()
-             isLoading = false
-         } catch {
-             print(error)
-             isLoading = false
-         }
-     }
-     
-     Task {
-         await viewModel.loadPhrases()
-     }
- */
