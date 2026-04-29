@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 /** (y luego al reves)
  SwiftUI View
@@ -28,12 +29,15 @@ import SwiftUI
 struct EnglishCardsApp: App {
     
     var body: some Scene {
+        let persistence = PersistenceController.shared
+        
         WindowGroup {
             /// Quien prepara datos para la UI
             let viewModel = PhraseViewModel(repository: repository)
             
             /// Muestras la pantalla
-            PhraseListView(viewModel: viewModel)
+            PhraseHomeView(viewModel: viewModel)
+                .environment(\.managedObjectContext, persistence.container.viewContext)
         }
     }
     

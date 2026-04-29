@@ -1,5 +1,5 @@
 //
-//  PhraseListView.swift
+//  PhraseHomeView.swift
 //  EnglishCards
 //
 //  Created by Asael Rodriguez on 21/04/26.
@@ -8,10 +8,14 @@
 import Foundation
 import SwiftUI
 import Combine
+import CoreData
 
-struct PhraseListView : View {
+struct PhraseHomeView : View {
     
     @StateObject private var viewModel: PhraseViewModel
+    
+    @Environment(\.managedObjectContext)
+    private var context
     
     init(viewModel: PhraseViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -43,10 +47,27 @@ struct PhraseListView : View {
                         }
                     }*/
                     ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink {
-                            InfoListView(phrases: $viewModel.randomPhrases)
-                        } label : {
-                            Image(systemName: "list.bullet")
+                        HStack {
+                            Button(action: {
+                                let phrase = PhraseEntity(context: context)
+                                phrase.id = 5
+                                phrase.text = "Save"
+                                
+                                do {
+                                    try context.save()
+                                    print("✅ Guardado en Core Data")
+                                } catch {
+                                    print("❌ Error: \(error)")
+                                }
+                            }){
+                                Image(systemName: "bookmark")
+                            }
+                            
+                            NavigationLink {
+                                InfoListView(phrases: $viewModel.randomPhrases)
+                            } label : {
+                                Image(systemName: "list.bullet")
+                            }
                         }
                     }
                 }
