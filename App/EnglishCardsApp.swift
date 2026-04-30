@@ -37,6 +37,11 @@ struct EnglishCardsApp: App {
             
             /// Muestras la pantalla
             PhraseHomeView(viewModel: viewModel)
+                /// Inyecta el contexto de Core Data al árbol de vistas.
+                /// Ya no tienes que pasar "context" manualmente por parámetros.
+                /// Todas las vistas hijas pueden acceder a él con:
+                    /// @Environment(\.managedObjectContext)
+                    /// private var context
                 .environment(\.managedObjectContext, persistence.container.viewContext)
         }
     }

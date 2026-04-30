@@ -17,6 +17,21 @@ struct PhraseHomeView : View {
     @Environment(\.managedObjectContext)
     private var context
     
+    /*@FetchRequest(sortDescriptors: [
+        SortDescriptor(\PhraseEntity.id)
+    ])*/
+    
+    @FetchRequest(
+        sortDescriptors: [
+            NSSortDescriptor(
+                keyPath: \PhraseEntity.id,
+                ascending: true
+            )
+        ]
+    )
+    
+    var phrasesCD : FetchedResults<PhraseEntity>
+    
     init(viewModel: PhraseViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -32,8 +47,9 @@ struct PhraseHomeView : View {
                         /// id: 1 → DraggableCard → offset propio
                         /// id: 2 → DraggableCard → offset propio
                         /// id: 3 → DraggableCard → offset propio
-                        ForEach(viewModel.randomPhrases, id: \.id) { item in
-                            DraggableCard(text: item.text, example: item.example) {
+                        //ForEach(viewModel.randomPhrases, id: \.id) { item in
+                        ForEach(phrasesCD, id: \.id) { item in
+                            DraggableCard(text: item.text!, example: item.example ?? "") {
                                 viewModel.moveToBack()
                             }
                         }
@@ -49,11 +65,16 @@ struct PhraseHomeView : View {
                     ToolbarItem(placement: .topBarTrailing) {
                         HStack {
                             Button(action: {
+                                
+                                /// // Crea un nuevo registro de la entidad PhraseEntity
+                                    /// INSERT nuevo registro
                                 let phrase = PhraseEntity(context: context)
-                                phrase.id = 5
+                                phrase.id = 6
                                 phrase.text = "Save"
                                 
                                 do {
+                                    /// Persiste cambios en disco
+                                        /// COMMIT / guardar en base de datos
                                     try context.save()
                                     print("✅ Guardado en Core Data")
                                 } catch {
