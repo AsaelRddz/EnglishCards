@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import CoreData
 
 /// @MainActor - Todo este ViewModel se ejecuta en el Main Thread (UI thread)
 @MainActor
@@ -34,6 +35,10 @@ class PhraseViewModel : ObservableObject {
                 /// •    Continúa después
                 phrases = try await repository.fetchPhrases()
                 randomPhrases = phrases.shuffled()
+                
+                //DispatchQueue.main.async {
+                  //  self.syncPhrases(result)
+                //}
                 
                 isLoading = false
             } catch {

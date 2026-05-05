@@ -7,7 +7,11 @@
 
 import Foundation
 
-class MockPhraseRepositoryImpl : PhraseRepository {    
+class MockPhraseRepositoryImpl : PhraseRepository {
+    func sync() async throws {
+        <#code#>
+    }
+    
     func fetchPhrases() async throws -> [Phrase] {
         try await Task.sleep(nanoseconds: 2_000_000_000)
 

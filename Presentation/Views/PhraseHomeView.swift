@@ -17,21 +17,6 @@ struct PhraseHomeView : View {
     @Environment(\.managedObjectContext)
     private var context
     
-    /*@FetchRequest(sortDescriptors: [
-        SortDescriptor(\PhraseEntity.id)
-    ])*/
-    
-    @FetchRequest(
-        sortDescriptors: [
-            NSSortDescriptor(
-                keyPath: \PhraseEntity.id,
-                ascending: true
-            )
-        ]
-    )
-    
-    var phrasesCD : FetchedResults<PhraseEntity>
-    
     init(viewModel: PhraseViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -48,7 +33,7 @@ struct PhraseHomeView : View {
                         /// id: 2 → DraggableCard → offset propio
                         /// id: 3 → DraggableCard → offset propio
                         //ForEach(viewModel.randomPhrases, id: \.id) { item in
-                        ForEach(phrasesCD, id: \.id) { item in
+                        ForEach(viewModel.randomPhrases, id: \.id) { item in
                             DraggableCard(text: item.text!, example: item.example ?? "") {
                                 viewModel.moveToBack()
                             }
