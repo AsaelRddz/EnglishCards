@@ -12,8 +12,8 @@ import CoreData
 /// @MainActor - Todo este ViewModel se ejecuta en el Main Thread (UI thread)
 @MainActor
 class PhraseViewModel : ObservableObject {
-    @Published var phrases : [Phrase] = []
-    @Published var randomPhrases : [Phrase] = []
+    //@Published var phrases : [Phrase] = []
+    //@Published var randomPhrases : [Phrase] = []
     @Published var isLoading = false
     
     private let repository: PhraseRepository
@@ -33,8 +33,10 @@ class PhraseViewModel : ObservableObject {
                 /// •    Suspende ejecución
                 /// •    Espera resultado
                 /// •    Continúa después
-                phrases = try await repository.fetchPhrases()
-                randomPhrases = phrases.shuffled()
+                // phrases = try await repository.fetchPhrases()
+                
+                try await repository.sync()
+                // randomPhrases = phrases.shuffled()
                 
                 //DispatchQueue.main.async {
                   //  self.syncPhrases(result)
@@ -42,7 +44,7 @@ class PhraseViewModel : ObservableObject {
                 
                 isLoading = false
             } catch {
-                print(error)
+                print("❌ Error sync:", error)
                 isLoading = false
             }
         }
@@ -50,7 +52,7 @@ class PhraseViewModel : ObservableObject {
     
     /// Cuando llames esta función, no escribas el nombre item
     ///     func moveToBack(_ item: Phrase) {
-    func moveToBack() {
+    /*func moveToBack() {
         /// elimina el ultimo valor y lo guarda en top (la card que se encuentra mas arriba)
         ///     let top = phrases[phrases.count - 1] // obtener último
         ///     phrases.removeLast()                 // quitarlo
@@ -59,5 +61,5 @@ class PhraseViewModel : ObservableObject {
         
         /// coloca top en la ultima posicion
         randomPhrases.insert(top, at: 0)
-    }
+    }*/
 }

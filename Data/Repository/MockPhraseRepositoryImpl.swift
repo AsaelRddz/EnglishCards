@@ -6,40 +6,45 @@
 //
 
 import Foundation
+import CoreData
 
 class MockPhraseRepositoryImpl : PhraseRepository {
-    func sync() async throws {
-        <#code#>
+    private let context : NSManagedObjectContext
+    
+    init(context: NSManagedObjectContext) {
+        self.context = context
     }
     
-    func fetchPhrases() async throws -> [Phrase] {
-        try await Task.sleep(nanoseconds: 2_000_000_000)
-
-        return [
-            Phrase(
-                id: 1,
-                text: "Hello world",
-                example: "Hello world is usually the first program.",
-                favorite: true
-            ),
-            Phrase(
-                id: 2,
-                text: "How are you?",
-                example: "How are you doing today?",
-                favorite: false
-            ),
-            Phrase(
-                id: 3,
-                text: "SwiftUI Preview",
-                example: "SwiftUI Preview helps visualize views quickly.",
-                favorite: false
-            ),
-            Phrase(
-                id: 4,
-                text: "This is a mock phrase",
-                example: "This is only sample data for testing.",
-                favorite: true
-            )
+    func sync() async throws {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        let mockData = [
+            PhraseDTO(id: 1, text: "Hello world", example: "First program", description: "basic"),
+            PhraseDTO(id: 2, text: "How are you?", example: "Daily question", description: "common"),
+            PhraseDTO(id: 3, text: "SwiftUI Preview", example: "UI testing", description: "dev"),
+            PhraseDTO(id: 4, text: "Mock phrase", example: "Sample data", description: "test")
         ]
+        
+        for dto in mockData {
+            let request : NSFetchRequest<PhraseEntity> = PhraseEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "id == %d", dto.id)
+            
+            let existing = try context.fetch(request).first
+            
+            if let existing {
+                existing.text = dto.text
+                existing.example = dto.example
+                existing.descriptionText = dto.description
+            } else {
+                let new = PhraseEntity(context: context)
+                new.id = Int64(dto.id)
+                new.text = dto.text
+                new.example = dto.example
+                new.descriptionText = dto.description
+                new.favorite = false
+            }
+        }
+        try context.save()
+        print("🧪 Mock sync completo")
     }
 }

@@ -30,7 +30,7 @@ class PhraseRepositoryImpl: PhraseRepository {
             /// filtro: busca registros con mismo id
             request.predicate = NSPredicate(format: "id == %d", dto.id)
             
-            /// si existe → lo obtienes ------- si no → nil
+            /// si existe se obtiene al primero que encuentre, en caso de que no da "nil"
             let existing = try context.fetch(request).first
             
             if let existing {
